@@ -11,17 +11,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 
-public class MainActivity extends AppCompatActivity {
+public class Activity_Contacts extends AppCompatActivity {
 
     private MaterialTextView info;
     private MaterialButton refresh;
@@ -58,13 +56,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestPermissionWithRationaleCheck() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.READ_CONTACTS)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(Activity_Contacts.this, Manifest.permission.READ_CONTACTS)) {
             Log.d("pttt", "shouldShowRequestPermissionRationale = true");
             // Show user description for what we need the permission
 
             String message = "permission description for approve";
             AlertDialog alertDialog =
-                    new AlertDialog.Builder(MainActivity.this)
+                    new AlertDialog.Builder(Activity_Contacts.this)
                             .setMessage(message)
                             .setPositiveButton(getString(android.R.string.ok),
                                     (dialog, which) -> {
@@ -88,21 +86,22 @@ public class MainActivity extends AppCompatActivity {
     private void openPermissionSettingDialog() {
         String message = "Setting screen if user have permanently disable the permission by clicking Don't ask again checkbox.";
         AlertDialog alertDialog =
-                new AlertDialog.Builder(MainActivity.this)
+                new AlertDialog.Builder(Activity_Contacts.this)
                         .setMessage(message)
                         .setPositiveButton(getString(android.R.string.ok),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent();
-                                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                                        intent.setData(uri);
-                                        startActivityForResult(intent, MANUALLY_CONTACTS_PERMISSION_REQUEST_CODE);
-                                        dialog.cancel();
-                                    }
+                                (dialog, which) -> {
+                                    openSettingsManually();
+                                    dialog.cancel();
                                 }).show();
         alertDialog.setCanceledOnTouchOutside(true);
+    }
+
+    private void openSettingsManually() {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, MANUALLY_CONTACTS_PERMISSION_REQUEST_CODE);
     }
 
     @Override
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getContacts() {
-        Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+        Toast.makeText(Activity_Contacts.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 } else {
-                    Toast.makeText(MainActivity.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity_Contacts.this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
